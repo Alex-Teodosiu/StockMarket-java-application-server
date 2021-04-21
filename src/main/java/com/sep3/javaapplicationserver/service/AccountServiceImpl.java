@@ -1,17 +1,21 @@
 package com.sep3.javaapplicationserver.service;
 
-import com.sep3.javaapplicationserver.model.User;
+import com.sep3.javaapplicationserver.model.Account;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AccountServiceImpl implements AccountService {
-    @Override
-    public User createUser(User user) {
-        return null;
-    }
+
+    private List<Account> accounts = new ArrayList<>();
 
     @Override
-    public User getUser() {
-        return null;
+    public Account createAccount(Account account) {
+        accounts.add(account);
+        System.out.println("service: " + account.getUsername() + account.getPassword());
+        return accounts.get(0);
     }
+
 }

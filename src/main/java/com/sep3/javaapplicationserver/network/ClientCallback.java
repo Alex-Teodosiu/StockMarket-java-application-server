@@ -1,6 +1,6 @@
 package com.sep3.javaapplicationserver.network;
 
-import com.sep3.javaapplicationserver.Account;
+import com.sep3.javaapplicationserver.model.Account;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

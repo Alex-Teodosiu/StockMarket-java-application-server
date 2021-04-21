@@ -1,17 +1,8 @@
 package com.sep3.javaapplicationserver.service;
 
-import com.sep3.javaapplicationserver.model.User;
+import com.sep3.javaapplicationserver.model.Account;
 
 public interface AccountService {
 
-    //CRUD:
-    //Create
-    User createUser(User user);
-
-    //Read
-    User getUser();
-
-    //Update
-
-    //Delete
+    Account createAccount(Account account);
 }
