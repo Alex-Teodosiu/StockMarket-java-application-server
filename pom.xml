@@ -12,7 +12,7 @@
     <artifactId>java-application-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>java-application-server</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Spring Boot Application for SEP3 Project</description>
     <properties>
         <java.version>15</java.version>
     </properties>
