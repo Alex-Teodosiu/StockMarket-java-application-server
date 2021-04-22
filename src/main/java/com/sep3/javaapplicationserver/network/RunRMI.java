@@ -1,5 +1,7 @@
 package com.sep3.javaapplicationserver.network;
 
+import shared.Account;
+
 import java.rmi.RemoteException;
 
 public class RunRMI {
@@ -13,7 +15,8 @@ public class RunRMI {
         {
             System.setSecurityManager(new SecurityManager());
         }
-        RmiApplicationClient client = new RmiApplicationClient();
+        RMIApplicationClient client = new RMIApplicationClient();
+        client.addAccount(new Account("Lucas1990","pass"));
     }
 
 }
