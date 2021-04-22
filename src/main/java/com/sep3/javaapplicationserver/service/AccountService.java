@@ -1,9 +1,9 @@
 package com.sep3.javaapplicationserver.service;
 
-
-import com.sep3.javaapplicationserver.model.Account;
+import shared.Account;
 
 public interface AccountService {
-    void addNewAccount(Account account);
+    void Start();
+    void AddNewAccount(Account account);
 }
 

@@ -1,7 +1,6 @@
 package networking;
 
 import shared.Account;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
