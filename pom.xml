@@ -12,7 +12,7 @@
     <artifactId>java-application-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>java-application-server</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Spring Boot Application for SEP3 Project</description>
     <properties>
         <java.version>15</java.version>
     </properties>
@@ -26,6 +26,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
         </dependency>
     </dependencies>
 
