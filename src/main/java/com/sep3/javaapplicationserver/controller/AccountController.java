@@ -5,22 +5,20 @@ import com.sep3.javaapplicationserver.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/account")
 public class AccountController {
 
-    AccountService accountService;
+    public final AccountService accountService;
 
     @Autowired
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    @PostMapping()
-    public Account createAccount(@RequestBody Account account) {
-        System.out.println("controller: " + account.getUsername());
-        return accountService.createAccount(account);
+    @PostMapping("")
+    public void addNewAccount(@RequestBody Account account) {
+        System.out.println("Controller: "+ account.toString());
+        accountService.addNewAccount(account);
     }
 }
