@@ -1,16 +1,16 @@
 package com.sep3.javaapplicationserver.controller;
 
-import com.sep3.javaapplicationserver.repository.AccountRepository;
 import com.sep3.javaapplicationserver.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.sep3.javaapplicationserver.model.Account;
-
-import java.util.Optional;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 @RestController
+@RequestMapping("/account")
 public class AccountController {
 
     public final AccountService accountService;
@@ -20,62 +20,16 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    //Create
-    @PostMapping("/account")
-    public ResponseEntity<String> registerAccount(@RequestBody Account account) {
-        ResponseEntity<String> responseEntity;
+    @PostMapping("")
+    public ResponseEntity<String> addNewAccount(@RequestBody Account account) {
+        ResponseEntity<String> entity;
         try {
-            accountService.registerAccount(account);
-            responseEntity = new ResponseEntity<String>("Sucessful registration", HttpStatus.OK);
+            accountService.addNewAccount(account);
+            entity = new ResponseEntity<>("ok",HttpStatus.OK);
+        }catch (Exception e){
+            entity = new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            System.out.println(entity.getBody());
         }
-        catch (Exception e){
-            responseEntity = new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-        return responseEntity;
+        return entity;
     }
-
-    //Read
-    @GetMapping("/login")
-    @ResponseBody
-    public ResponseEntity<String> login(@RequestParam String username, String password){
-        ResponseEntity<String> responseEntity;
-
-        try {
-            accountService.login(username, password);
-            responseEntity = new ResponseEntity<String>("Sucessful login", HttpStatus.OK);
-        }
-        catch (Exception e){
-            responseEntity = new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-        return responseEntity;
-    }
-
-    @GetMapping("/")
-    @ResponseBody
-    public Account getAccount(@PathVariable String username) throws Exception {
-        Optional<Account> accountOptional= accountService.getAccount(username);
-        if(!accountOptional.isPresent())
-        {
-            throw new Exception("Account doesn't exist");
-        }
-        Account temp = new Account(accountOptional.get().getUsername(), accountOptional.get().getPassword());
-        temp.setId(accountOptional.get().getId());
-        return temp;
-    }
-
-    //Update
-    @PutMapping("/account")
-    public ResponseEntity<String> editAccount(@RequestBody Account account){
-        ResponseEntity<String> response;
-
-        try {
-            accountService.editAccount(account);
-            response = new ResponseEntity<String>("Account edited successfully", HttpStatus.OK);
-        }
-        catch (Exception e){
-            response = new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-        return response;
-    }
-
 }
