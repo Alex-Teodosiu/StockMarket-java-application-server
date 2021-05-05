@@ -1,9 +1,9 @@
 package com.sep3.javaapplicationserver.service;
 
-import shared.Account;
+import com.sep3.javaapplicationserver.model.Account;
+import org.springframework.stereotype.Service;
 
 public interface AccountService {
-    void Start();
-    void AddNewAccount(Account account);
+    void addNewAccount(Account account);
 }
 
