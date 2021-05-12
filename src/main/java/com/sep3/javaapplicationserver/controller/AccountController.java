@@ -2,15 +2,10 @@ package com.sep3.javaapplicationserver.controller;
 
 import com.sep3.javaapplicationserver.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.http.HttpEntity;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.sep3.javaapplicationserver.model.Account;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
-
 import java.util.Optional;
 
 @RestController
@@ -54,23 +49,23 @@ public class AccountController {
         return responseEntity;
     }
 
-    @GetMapping("/")
+    @GetMapping("/username")
     @ResponseBody
-    public Account getAccount(@PathVariable String username) throws Exception {
-        Optional<Account> accountOptional= accountService.getAccount(username);
-        if(!accountOptional.isPresent())
-        {
+    public Account getAccount(@PathVariable("username") String username) throws Exception {
+        Optional<Account> accountOptional = accountService.getAccount(username);
+        if (!accountOptional.isPresent()) {
             throw new Exception("Account doesn't exist");
         }
         Account temp = new Account(accountOptional.get().getUsername(), accountOptional.get().getPassword());
         temp.setId(accountOptional.get().getId());
         return temp;
+    }
 
     @PostMapping("")
     public ResponseEntity<String> addNewAccount(@RequestBody Account account) {
         ResponseEntity<String> entity;
         try {
-            accountService.addNewAccount(account);
+            accountService.registerAccount(account);
             entity = new ResponseEntity<>("ok",HttpStatus.OK);
         }catch (Exception e){
             entity = new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
