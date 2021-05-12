@@ -1,7 +1,6 @@
 package com.sep3.javaapplicationserver.model;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table
