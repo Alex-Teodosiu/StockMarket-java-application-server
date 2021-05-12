@@ -1,7 +1,7 @@
 package com.sep3.javaapplicationserver.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import com.sep3.javaapplicationserver.model.Account;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

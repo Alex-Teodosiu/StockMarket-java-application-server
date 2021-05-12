@@ -24,7 +24,7 @@ public class AccountController {
     public ResponseEntity<String> addNewAccount(@RequestBody Account account) {
         ResponseEntity<String> entity;
         try {
-            accountService.addNewAccount(account);
+            accountService.registerAccount(account);
             entity = new ResponseEntity<>("ok",HttpStatus.OK);
         }catch (Exception e){
             entity = new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
