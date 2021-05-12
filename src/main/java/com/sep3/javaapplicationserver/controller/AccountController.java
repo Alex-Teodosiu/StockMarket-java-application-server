@@ -1,11 +1,14 @@
 package com.sep3.javaapplicationserver.controller;
 
+import com.sep3.javaapplicationserver.repository.AccountRepository;
 import com.sep3.javaapplicationserver.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.sep3.javaapplicationserver.model.Account;
+
+import java.util.Optional;
 
 @RestController
 public class AccountController {
@@ -45,6 +48,19 @@ public class AccountController {
             responseEntity = new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         return responseEntity;
+    }
+
+    @GetMapping("/")
+    @ResponseBody
+    public Account getAccount(@PathVariable String username) throws Exception {
+        Optional<Account> accountOptional= accountService.getAccount(username);
+        if(!accountOptional.isPresent())
+        {
+            throw new Exception("Account doesn't exist");
+        }
+        Account temp = new Account(accountOptional.get().getUsername(), accountOptional.get().getPassword());
+        temp.setId(accountOptional.get().getId());
+        return temp;
     }
 
     //Update

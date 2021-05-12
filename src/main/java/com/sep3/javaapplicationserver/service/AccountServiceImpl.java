@@ -58,5 +58,11 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    @Override
+    public Optional<Account> getAccount(String username) {
+        Optional<Account> account1 = accountRepository.findAccountByUsername(username);
+        return account1;
+    }
+
 
 }
