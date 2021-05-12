@@ -59,10 +59,10 @@ public class AccountController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<String> getAccounts(@RequestBody Account account) {
+    public ResponseEntity<String> getAccount(@RequestBody Account account) {
         ResponseEntity<String> entity;
         try {
-            accountService.editAccount(account);
+            accountService.getAccount(account.getUsername());
             entity = new ResponseEntity<>("ok", HttpStatus.OK);
         }catch (Exception e){
             entity = new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
