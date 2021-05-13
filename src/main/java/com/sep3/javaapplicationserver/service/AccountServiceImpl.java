@@ -4,9 +4,10 @@ import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.Optional;
 
 @Service
@@ -20,7 +21,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void registerAccount(Account account) {
+    public void addNewAccount(Account account) {
         Optional<Account> accountOptional = accountRepository
                 .findAccountByUsername(account.getUsername());
 
@@ -30,39 +31,12 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.save(account);
     }
-    @Override
-    public void login(String username, String password) {
-        Optional<Account> possibleUser = accountRepository.findAccountByUsername(username);
 
-        if (!possibleUser.isPresent()) {
-            throw new IllegalStateException("Account username does not exist");
-        }
-
-        if(!password.equals(possibleUser.get().getPassword())){
-            throw new IllegalStateException("Invalid password");
-        }
-    }
-
-    @Transactional //MAGIC!!!!!!!!!!!!!!!!
     @Override
     public void editAccount(Account account) {
-        Account account1 = accountRepository.findById(account.getId()).orElseThrow(() -> new IllegalStateException("Account doesn't exist"));
-
-        if(account.getUsername()!=null && account.getUsername().length()>0 && !Objects.equals(account1.getUsername(), account.getUsername())){
-            account1.setUsername(account.getUsername());
-        }
-
-        if(account.getPassword()!=null && account.getPassword().length()>6 && !Objects.equals(account1.getPassword(), account.getPassword())){
-            account1.setPassword(account.getPassword());
-        }
-
+        Account a = accountRepository.getOne(account.getId());
+        a.setUsername(account.getUsername());
+        a.setPassword(account.getPassword());
+        accountRepository.save(a);
     }
-
-    @Override
-    public Optional<Account> getAccount(String username) {
-        Optional<Account> account1 = accountRepository.findAccountByUsername(username);
-        return account1;
-    }
-
-
 }
