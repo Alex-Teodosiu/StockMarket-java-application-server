@@ -19,21 +19,27 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void addNewAccount(Account account) {
-        Optional<Account> accountOptional = accountRepository
-                .findAccountByUsername(account.getUsername());
-
-        if (accountOptional.isPresent()) {
-            throw new IllegalStateException("username already taken");
-        }
+        checkUsername(account);
 
         accountRepository.save(account);
     }
 
     @Override
     public void editAccount(Account account) {
+        checkUsername(account);
+
         Account a = accountRepository.getOne(account.getId());
         a.setUsername(account.getUsername());
         a.setPassword(account.getPassword());
         accountRepository.save(a);
+    }
+
+    private void checkUsername(Account account){
+        Optional<Account> accountOptional = accountRepository
+                .findAccountByUsername(account.getUsername());
+
+        if (accountOptional.isPresent() && account.getId() != accountOptional.get().getId()) {
+            throw new IllegalStateException("username already taken");
+        }
     }
 }
