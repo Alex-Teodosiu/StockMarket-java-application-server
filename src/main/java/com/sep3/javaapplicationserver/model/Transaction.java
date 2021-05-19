@@ -1,6 +1,7 @@
 package com.sep3.javaapplicationserver.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,7 +23,7 @@ public class Transaction {
     private String stockSymbol;
 
     @Column(nullable = false)
-    private int quantity;
+    private Integer quantity;
 
     @CreationTimestamp
     @Column(nullable = false, columnDefinition = "timestamp(0)")
@@ -32,9 +33,12 @@ public class Transaction {
     private BigDecimal price;
 
     @Column(nullable = false)
-    private boolean isBuy;
+    private Boolean isBuy;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id",nullable = false)
+
+    //@JsonIgnore
+    @JsonIgnoreProperties("hibernateLazyInitializer")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 }
