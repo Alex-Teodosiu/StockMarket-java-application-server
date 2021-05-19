@@ -21,10 +21,12 @@ public class Account {
     @JsonIgnore
     private String password;
 
+    @JsonIgnore
     @CreationTimestamp
     @Column(nullable = false, columnDefinition = "timestamp(0)")
     private LocalDateTime dateCreated;
 
+    @JsonIgnore
     @UpdateTimestamp
     @Column(nullable = false, columnDefinition = "timestamp(0)")
     private LocalDateTime dateUpdated;

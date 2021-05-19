@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +25,7 @@ public class AccountController {
     public AccountRepository accountRepository;
 
     @PostMapping("")
-    public ResponseEntity<?> createAccount(@RequestBody Account account) {
+    public ResponseEntity<?> addNewAccount(@RequestBody Account account) {
         try {
             account = accountService.addNewAccount(account);
             return ResponseEntity.status(HttpStatus.CREATED).body(account);
@@ -36,20 +37,24 @@ public class AccountController {
         }
     }
 
-    @PutMapping("")
-    public ResponseEntity<?> editAccount(@RequestBody Account account){
-        Optional<Account> findAccount = accountRepository.findById(account.getId());
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editAccount(@PathVariable Long id, @RequestBody Account account) {
+        Optional<Account> accountExists = accountRepository.findById(id);
 
-        if (findAccount.isPresent()){
+        if (accountExists.isPresent()) {
             try {
                 accountService.editAccount(account);
-                return ResponseEntity.ok(account);
+
+                BeanUtils.copyProperties(account, accountExists.get(), "id", "dateCreated");
+                accountExists.get().setDateUpdated(LocalDateTime.now());
+
+                accountRepository.save(accountExists.get());
+                return ResponseEntity.ok(accountExists.get());
+
             } catch (DataIntegrityViolationException e) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-            } catch (EntityNotFoundException e) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
             }
         }
-        return ResponseEntity.ok(account);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account id does not exists");
     }
 }

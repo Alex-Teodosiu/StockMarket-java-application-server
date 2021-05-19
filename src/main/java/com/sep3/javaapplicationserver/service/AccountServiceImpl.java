@@ -2,14 +2,12 @@ package com.sep3.javaapplicationserver.service;
 
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -24,58 +22,47 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account addNewAccount(Account account) {
-        checkUsername(account);
+        Optional<Account> accountOptional = accountRepository
+                .findAccountByUsername(account.getUsername());
 
+        if (accountOptional.isPresent()) {
+            throw new DataIntegrityViolationException("Username already taken");
+        }
         return accountRepository.save(account);
     }
 
     @Override
-    public Account editAccount(Account account) {
-        Account accountToEdit = accountRepository
-                .findById(account.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Account doesn't exist"));
-
-        checkUsername(account);
-
-        if (account.getPassword() != null){
-            accountToEdit.setPassword(account.getPassword());
-        }
-        if (account.getUsername() != null) {
-            accountToEdit.setUsername(account.getUsername());
-        }
-        accountToEdit.setDateUpdated(LocalDateTime.now());
-
-        return accountRepository.save(accountToEdit);
-    }
-
-    private void checkUsername(Account account){
+    public void editAccount(Account account) {
         Optional<Account> accountOptional = accountRepository
                 .findAccountByUsername(account.getUsername());
 
-        if (accountOptional.isPresent() &&
-                !account.getId().equals(accountOptional.get().getId())) {
+        if(accountOptional.isPresent()) {
             throw new DataIntegrityViolationException("Username already taken");
         }
+//        BeanUtils.copyProperties(account, accountOptional.get(), "id", "dateCreated");
+//        accountOptional.get().setDateUpdated(LocalDateTime.now());
+//
+//        return accountRepository.save(accountOptional.get());
+
+
+//        Optional<Account> accountOptional = accountRepository
+//                    .findAccountByUsername(account.getUsername());
+//
+//        if (accountOptional.isPresent()) {
+//            throw new DataIntegrityViolationException("Username already taken");
+//        }
+//
+//        if(account.getUsername()!= null && account.getUsername().length()>0
+//                && !Objects.equals(accountOptional.get().getUsername(), account.getUsername())){
+//            accountOptional.get().setUsername(account.getUsername());
+//        }
+//
+//        if(account.getPassword()!=null && account.getPassword().length()>6
+//                && !Objects.equals(accountOptional.get().getPassword(), account.getPassword())){
+//            accountOptional.get().setPassword(account.getPassword());
+//        }
+//
+//        return accountRepository.save(accountOptional.get());
     }
 
-//    @Transactional //MAGIC!!!!!!!!!!!!!!!!
-//    @Override
-//    public void editAccount(Account account) {
-//        Account account1 = accountRepository.findById(account.getId()).orElseThrow(() -> new IllegalStateException("Account doesn't exist"));
-//
-//        if(account.getUsername()!=null && account.getUsername().length()>0 && !Objects.equals(account1.getUsername(), account.getUsername())){
-//            account1.setUsername(account.getUsername());
-//        }
-//
-//        if(account.getPassword()!=null && account.getPassword().length()>6 && !Objects.equals(account1.getPassword(), account.getPassword())){
-//            account1.setPassword(account.getPassword());
-//        }
-//
-//    }
-//
-//    @Override
-//    public Optional<Account> getAccount(String username) {
-//        Optional<Account> account1 = accountRepository.findAccountByUsername(username);
-//        return account1;
-//    }
 }
