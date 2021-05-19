@@ -16,4 +16,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 //    Optional<Transaction> findTransactionByAccountID(long id);
 //    Optional<Transaction> findTransactionByAccountID(long id);
     List<Transaction> account_id(Long id);
+
+    @Query("from Transaction where account.id = :accountId and isBuy = :isBuy")
+    List<Transaction> getByAccoundIdAndType(Long accountId, boolean isBuy);
 }
