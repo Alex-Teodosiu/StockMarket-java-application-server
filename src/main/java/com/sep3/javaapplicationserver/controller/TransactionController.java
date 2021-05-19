@@ -58,7 +58,12 @@ public class TransactionController {
 
     @GetMapping("/by-account-and-type")
     public List<Transaction> getByAccount(Long accountId, boolean isBuy) {
-        return transactionRepository.getByAccoundIdAndType(accountId, isBuy);
+        return transactionRepository.getByAccountIdAndType(accountId, isBuy);
+    }
+
+    @GetMapping("/by-account-and-stockSymbol")
+    public List<Transaction> getByAccountAndStockSymbol(Long accountId, String stockSymbol) {
+        return transactionRepository.getByAccountAndStockSymbol(accountId, stockSymbol);
     }
 
     @PostMapping
