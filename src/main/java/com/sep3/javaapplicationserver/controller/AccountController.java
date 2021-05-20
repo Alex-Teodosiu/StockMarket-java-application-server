@@ -1,47 +1,60 @@
 package com.sep3.javaapplicationserver.controller;
 
 import com.sep3.javaapplicationserver.model.Account;
+import com.sep3.javaapplicationserver.repository.AccountRepository;
 import com.sep3.javaapplicationserver.service.AccountService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/account")
 public class AccountController {
 
-    public final AccountService accountService;
+    @Autowired
+    public AccountService accountService;
 
     @Autowired
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
+    public AccountRepository accountRepository;
 
     @PostMapping("")
-    public ResponseEntity<String> addNewAccount(@RequestBody Account account) {
-        ResponseEntity<String> entity;
+    public ResponseEntity<?> addNewAccount(@RequestBody Account account) {
         try {
-            accountService.addNewAccount(account);
-            entity = new ResponseEntity<>("ok",HttpStatus.OK);
-        }catch (Exception e){
-            entity = new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-            System.out.println(entity.getBody());
+            account = accountService.addNewAccount(account);
+            return ResponseEntity.status(HttpStatus.CREATED).body(account);
+
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)//409 Conflict
+                    .body(e.getMessage());
         }
-        return entity;
     }
 
-    @PutMapping("")
-    public ResponseEntity<String> editAccount(@RequestBody Account account){
-        ResponseEntity<String> response;
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editAccount(@PathVariable Long id, @RequestBody Account account) {
+        Optional<Account> accountExists = accountRepository.findById(id);
 
-        try {
-            accountService.editAccount(account);
-            response = new ResponseEntity<String>("Account edited successfully", HttpStatus.OK);
+        if (accountExists.isPresent()) {
+            try {
+                accountService.editAccount(account);
+
+                BeanUtils.copyProperties(account, accountExists.get(), "id", "dateCreated");
+                accountExists.get().setDateUpdated(LocalDateTime.now());
+
+                accountRepository.save(accountExists.get());
+                return ResponseEntity.ok(accountExists.get());
+
+            } catch (DataIntegrityViolationException e) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            }
         }
-        catch (Exception e){
-            response = new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-        return response;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account id does not exists");
     }
 }
