@@ -1,44 +1,42 @@
 package com.sep3.javaapplicationserver.service;
 
-import networking.ClientCallback;
-import networking.IntRMIDatabaseServer;
+import com.sep3.javaapplicationserver.model.Account;
+import com.sep3.javaapplicationserver.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import shared.Account;
 
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
+import java.util.Optional;
 
 @Service
-public class AccountServiceImpl implements AccountService, ClientCallback {
+public class AccountServiceImpl implements AccountService {
 
-    private IntRMIDatabaseServer intRmiDatabaseServer;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public AccountServiceImpl() {
-        Start();
+    public AccountServiceImpl(AccountRepository accountRepository){
+        this.accountRepository = accountRepository;
     }
 
     @Override
-    public void Start() {
-        try {
-            UnicastRemoteObject.exportObject(this, 0);
-            Registry localhost = LocateRegistry.getRegistry("localhost", 1099);
-            intRmiDatabaseServer = (IntRMIDatabaseServer) localhost.lookup("server");
-        } catch (RemoteException | NotBoundException e) {
-            e.printStackTrace();
+    public Account addNewAccount(Account account) {
+        Optional<Account> accountOptional = accountRepository
+                .findAccountByUsername(account.getUsername());
+
+        if (accountOptional.isPresent()) {
+            throw new DataIntegrityViolationException("Username already taken");
         }
+        return accountRepository.save(account);
     }
 
     @Override
-    public void AddNewAccount(Account account) {
-        try {
-            intRmiDatabaseServer.addAccount(account);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+    public void editAccount(Account account) {
+        Optional<Account> accountOptional = accountRepository
+                .findAccountByUsername(account.getUsername());
+
+        if(accountOptional.isPresent() && !account.getId().equals(accountOptional.get().getId())) {
+            throw new DataIntegrityViolationException("Username already taken");
         }
     }
+
 }
