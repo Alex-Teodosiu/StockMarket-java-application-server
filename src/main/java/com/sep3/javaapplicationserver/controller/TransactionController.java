@@ -66,5 +66,11 @@ public class TransactionController {
         }
     }
 
+    @DeleteMapping("/{accountId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllByAccountId(@PathVariable Long accountId) {
+        accountService.findByIdOrFail(accountId);
+        transactionService.deleteAllByAccountId(accountId);
+    }
 
 }

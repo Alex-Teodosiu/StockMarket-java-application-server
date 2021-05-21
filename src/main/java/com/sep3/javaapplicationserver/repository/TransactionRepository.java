@@ -19,4 +19,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("from Transaction where account.id = :accountId and stockSymbol = :stockSymbol")
     List<Transaction> getByAccountAndStockSymbol(Long accountId, String stockSymbol);
+
+    void deleteTransactionByAccount_Id(Long accountId);
 }
