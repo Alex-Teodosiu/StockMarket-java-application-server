@@ -8,5 +8,7 @@ public interface AccountService {
 
     Account findByIdOrFail(Long accountId);
     void findUniqueUsernameOrFail(String username);
+
+    void delete(Long accountId);
 }
 

@@ -1,5 +1,6 @@
 package com.sep3.javaapplicationserver.controller;
 
+import com.sep3.javaapplicationserver.exception.EntityNotFoundException;
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
 import com.sep3.javaapplicationserver.service.AccountService;
@@ -47,5 +48,12 @@ public class AccountController {
         }
 
         return accountService.update(accountToEdit, accountCurrent);
+    }
+
+    @DeleteMapping("/{accountId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long accountId) {
+        accountService.findByIdOrFail(accountId);
+        accountService.delete(accountId);
     }
 }
