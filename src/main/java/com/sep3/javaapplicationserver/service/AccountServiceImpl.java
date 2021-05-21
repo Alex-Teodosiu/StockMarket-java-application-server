@@ -6,6 +6,8 @@ import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
@@ -14,6 +16,7 @@ public class AccountServiceImpl implements AccountService {
 
     public static final String ACCOUNT_NOT_FOUND = "Account Id %d not found";
     public static final String USERNAME_ALREADY_TAKEN = "Username %s already taken";
+    private static final String ACCOUNT_IN_USE = "Account Id %d is in use and cannot be deleted";
 
     private final AccountRepository accountRepository;
 
@@ -45,5 +48,17 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.findAccountByUsername(username)
                 .ifPresent(a -> { throw  new EntityInUseException(
                         String.format(USERNAME_ALREADY_TAKEN, username)); } );
+    }
+
+    @Override
+    public void delete(Long accountId) {
+        try {
+            accountRepository.deleteById(accountId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException(
+                    String.format(ACCOUNT_NOT_FOUND, accountId));
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityInUseException(String.format(ACCOUNT_IN_USE, accountId));
+        }
     }
 }
