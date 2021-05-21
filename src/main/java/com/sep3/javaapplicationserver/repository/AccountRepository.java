@@ -10,7 +10,6 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
-    // SELECT * FROM student WHERE email = ?
     @Query("SELECT a FROM Account a WHERE a.username = :username")
     Optional<Account> findAccountByUsername(String username);
 }
