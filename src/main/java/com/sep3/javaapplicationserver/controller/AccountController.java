@@ -3,16 +3,11 @@ package com.sep3.javaapplicationserver.controller;
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
 import com.sep3.javaapplicationserver.service.AccountService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/account")
@@ -24,37 +19,33 @@ public class AccountController {
     @Autowired
     public AccountRepository accountRepository;
 
-    @PostMapping("")
-    public ResponseEntity<?> addNewAccount(@RequestBody Account account) {
-        try {
-            account = accountService.addNewAccount(account);
-            return ResponseEntity.status(HttpStatus.CREATED).body(account);
-
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)//409 Conflict
-                    .body(e.getMessage());
-        }
+    @GetMapping
+    public List<Account> listAll() {
+        return accountRepository.findAll();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> editAccount(@PathVariable Long id, @RequestBody Account account) {
-        Optional<Account> accountExists = accountRepository.findById(id);
+    @GetMapping("/{accountId}")
+    public Account getById(@PathVariable Long accountId) {
+        return accountService.findByIdOrFail(accountId);
+    }
 
-        if (accountExists.isPresent()) {
-            try {
-                accountService.editAccount(account);
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account add(@RequestBody Account account) {
+        accountService.findUniqueUsernameOrFail(account.getUsername());
+        return accountService.save(account);
+    }
 
-                BeanUtils.copyProperties(account, accountExists.get(), "id", "dateCreated");
-                accountExists.get().setDateUpdated(LocalDateTime.now());
+    @PutMapping("/{accountId}")
+    public Account update(@PathVariable Long accountId, @RequestBody Account accountToEdit) {
 
-                accountRepository.save(accountExists.get());
-                return ResponseEntity.ok(accountExists.get());
+        Account accountCurrent = accountService.findByIdOrFail(accountId);
 
-            } catch (DataIntegrityViolationException e) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-            }
+        if (!accountCurrent.getUsername().equals(accountToEdit.getUsername())) {
+            accountService.findUniqueUsernameOrFail(accountToEdit.getUsername());
+            return accountService.update(accountToEdit, accountCurrent);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account id does not exists");
+
+        return accountService.update(accountToEdit, accountCurrent);
     }
 }
