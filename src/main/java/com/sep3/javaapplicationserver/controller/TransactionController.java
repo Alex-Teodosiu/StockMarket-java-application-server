@@ -1,18 +1,15 @@
 package com.sep3.javaapplicationserver.controller;
 
-import com.sep3.javaapplicationserver.model.Account;
+import com.sep3.javaapplicationserver.exception.BusinessException;
+import com.sep3.javaapplicationserver.exception.EntityNotFoundException;
 import com.sep3.javaapplicationserver.model.Transaction;
-import com.sep3.javaapplicationserver.repository.AccountRepository;
 import com.sep3.javaapplicationserver.repository.TransactionRepository;
+import com.sep3.javaapplicationserver.service.AccountService;
 import com.sep3.javaapplicationserver.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/transaction")
@@ -25,7 +22,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
 
     @GetMapping
@@ -34,27 +31,17 @@ public class TransactionController {
     }
 
     @GetMapping("/{transactionId}")
-    public ResponseEntity<Transaction> getById(@PathVariable Long transactionId) {
-        Optional<Transaction> transaction = transactionRepository.findById(transactionId);
-
-        if (transaction.isPresent()) {
-            return ResponseEntity.ok(transaction.get());
-        }
-        return ResponseEntity.notFound().build();
+    public Transaction getById(@PathVariable Long transactionId) {
+        return transactionService.findTransactionByIdOrFail(transactionId);
     }
 
     @GetMapping("/all/{accountId}")
-    public ResponseEntity<List<Transaction>> getByAccountId(@PathVariable Long accountId) {
-
-        Optional<Account> account = accountRepository.findById(accountId);
-
-        if (account.isPresent()) {
-            List<Transaction> allTransactionsByAccount = transactionRepository.account_id(accountId);
-
-            return ResponseEntity.ok(allTransactionsByAccount);
-        }
-        return ResponseEntity.notFound().build();
+    public List<Transaction> getByAccountId(@PathVariable Long accountId) {
+        accountService.findByIdOrFail(accountId);
+        return transactionRepository.findByAccount_id(accountId);
     }
+
+    // TODO return/throw exception if not found parameters
 
     @GetMapping("/by-account-and-type")
     public List<Transaction> getByAccount(Long accountId, boolean isBuy) {
@@ -63,19 +50,19 @@ public class TransactionController {
 
     @GetMapping("/by-account-and-stockSymbol")
     public List<Transaction> getByAccountAndStockSymbol(Long accountId, String stockSymbol) {
+        accountService.findByIdOrFail(accountId);
+
         return transactionRepository.getByAccountAndStockSymbol(accountId, stockSymbol);
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody Transaction transaction) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Transaction add(@RequestBody Transaction transaction) {
         try {
-            transaction = transactionService.save(transaction);
+            return transactionService.save(transaction);
 
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(transaction);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            throw new BusinessException(e.getMessage());
         }
     }
 
