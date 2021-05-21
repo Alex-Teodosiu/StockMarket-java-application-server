@@ -1,14 +1,17 @@
 package com.sep3.javaapplicationserver.service;
 
+import com.sep3.javaapplicationserver.exception.EntityNotFoundException;
+import com.sep3.javaapplicationserver.exception.BusinessException;
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class LoginServiceImpl implements LoginService {
+
+    public static final String USERNAME_NOT_FOUND = "Username %s not found";
+    public static final String INVALID_PASSWORD = "Invalid password";
 
     private final AccountRepository accountRepository;
 
@@ -19,17 +22,21 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Account login(String username, String password) {
-        Optional<Account> possibleUser = accountRepository.findAccountByUsername(username);
+        Account toLogin = findByUsernameOrFail(username);
 
-        if (!possibleUser.isPresent()) {
-            throw new IllegalStateException("Account username does not exist");
+        if (!password.equals(toLogin.getPassword())) {
+            throw new BusinessException(INVALID_PASSWORD);
         }
-
-        if(!password.equals(possibleUser.get().getPassword())){
-            throw new IllegalStateException("Invalid password");
-        }
-
-        return possibleUser.get();
+        else return toLogin;
     }
+
+    @Override
+    public Account findByUsernameOrFail(String username) {
+        return accountRepository
+                .findAccountByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format(USERNAME_NOT_FOUND, username)));
+    }
+
 
 }

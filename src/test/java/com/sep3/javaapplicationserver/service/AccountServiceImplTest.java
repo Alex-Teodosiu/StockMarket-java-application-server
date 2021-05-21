@@ -3,6 +3,7 @@ package com.sep3.javaapplicationserver.service;
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,11 +45,11 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void addNewAccount() {
+    void save() {
         Account account = new Account();
         account.setUsername("Joshua");
         account.setPassword("password");
-        service.addNewAccount(account);
+        service.save(account);
 
 
         ArrayList<Account> accounts = (ArrayList<Account>) repository.findAll();
@@ -58,14 +59,16 @@ class AccountServiceImplTest {
         }
 
         Optional<Account> account1 = repository.findAccountByUsername("Joshua");
-        Assert.assertEquals(account.getUsername(), account1.get().getUsername());
+        Assertions.assertEquals(account.getUsername(), account1.get().getUsername());
     }
 
     @Test
-    void editAccount() {
+    void update() {
         Optional<Account> account = repository.findAccountByUsername("Pupendo");
-        account.get().setUsername("Joshua");
-        service.editAccount(account.get());
+        Account newAccountDetails = new Account();
+        newAccountDetails.setUsername("lucas");
+        newAccountDetails.setPassword("lucaspassword");
+        service.update(newAccountDetails, account.get());
         ArrayList<Account> accounts = (ArrayList<Account>) repository.findAll();
         for (Account a: accounts) {
             System.out.println("EDITED ACCOUNT");

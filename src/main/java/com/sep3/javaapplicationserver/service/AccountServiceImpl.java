@@ -1,15 +1,19 @@
 package com.sep3.javaapplicationserver.service;
 
+import com.sep3.javaapplicationserver.exception.EntityInUseException;
+import com.sep3.javaapplicationserver.exception.EntityNotFoundException;
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 public class AccountServiceImpl implements AccountService {
+
+    public static final String ACCOUNT_NOT_FOUND = "Account Id %d not found";
+    public static final String USERNAME_ALREADY_TAKEN = "Username %s already taken";
 
     private final AccountRepository accountRepository;
 
@@ -19,24 +23,27 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account addNewAccount(Account account) {
-        Optional<Account> accountOptional = accountRepository
-                .findAccountByUsername(account.getUsername());
-
-        if (accountOptional.isPresent()) {
-            throw new DataIntegrityViolationException("Username already taken");
-        }
+    public Account save(Account account) {
         return accountRepository.save(account);
     }
 
     @Override
-    public void editAccount(Account account) {
-        Optional<Account> accountOptional = accountRepository
-                .findAccountByUsername(account.getUsername());
+    public Account update(Account accountToEdit, Account accountCurrent) {
+        BeanUtils.copyProperties(accountToEdit, accountCurrent, "id", "dateCreated");
+        accountCurrent.setDateUpdated(LocalDateTime.now());
 
-        if(accountOptional.isPresent() && !account.getId().equals(accountOptional.get().getId())) {
-            throw new DataIntegrityViolationException("Username already taken");
-        }
+        return accountRepository.save(accountCurrent);
     }
 
+    public Account findByIdOrFail(Long accountId) {
+        return accountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format(ACCOUNT_NOT_FOUND, accountId)));
+    }
+
+    public void findUniqueUsernameOrFail(String username) {
+        accountRepository.findAccountByUsername(username)
+                .ifPresent(a -> { throw  new EntityInUseException(
+                        String.format(USERNAME_ALREADY_TAKEN, username)); } );
+    }
 }
