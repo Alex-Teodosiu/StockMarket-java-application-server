@@ -7,6 +7,7 @@ import com.sep3.javaapplicationserver.repository.AccountRepository;
 import com.sep3.javaapplicationserver.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -38,5 +39,11 @@ public class TransactionServiceImpl implements TransactionService {
                 .findById(transactionId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(TRANSACTION_NOT_FOUND, transactionId)));
+    }
+
+    @Transactional
+    @Override
+    public void deleteAllByAccountId(Long accountId) {
+        transactionRepository.deleteTransactionByAccount_Id(accountId);
     }
 }
