@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
@@ -28,6 +30,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         Account account = accountService.findByIdOrFail(accountId);
 
+        accountService.update(transaction.getAccount(), account);
         transaction.setAccount(account);
 
         return transactionRepository.save(transaction);

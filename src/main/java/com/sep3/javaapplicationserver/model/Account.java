@@ -2,10 +2,12 @@ package com.sep3.javaapplicationserver.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,6 +21,10 @@ public class Account {
     private String username;
 
     private String password;
+
+    @Column(nullable = false)
+    @ColumnDefault("10000")
+    private BigDecimal balance;
 
     @JsonIgnore
     @CreationTimestamp
@@ -46,6 +52,7 @@ public class Account {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", balance='" + balance + '\'' +
                 '}';
     }
 }
