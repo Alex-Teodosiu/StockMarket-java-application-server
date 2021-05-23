@@ -45,4 +45,9 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
+
+    @JsonIgnore
+    public BigDecimal GetTotal(){
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
 }
