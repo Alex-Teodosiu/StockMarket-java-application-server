@@ -1,9 +1,10 @@
-package com.sep3.javaapplicationserver.service;
+package com.sep3.javaapplicationserver.service.account;
 
 import com.sep3.javaapplicationserver.exception.EntityInUseException;
 import com.sep3.javaapplicationserver.exception.EntityNotFoundException;
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
+import com.sep3.javaapplicationserver.service.account.AccountService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

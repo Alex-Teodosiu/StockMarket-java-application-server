@@ -1,4 +1,4 @@
-package com.sep3.javaapplicationserver.service;
+package com.sep3.javaapplicationserver.service.account;
 
 import com.sep3.javaapplicationserver.model.Account;
 

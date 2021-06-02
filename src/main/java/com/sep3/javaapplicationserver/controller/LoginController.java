@@ -1,7 +1,7 @@
 package com.sep3.javaapplicationserver.controller;
 
 import com.sep3.javaapplicationserver.model.Account;
-import com.sep3.javaapplicationserver.service.LoginService;
+import com.sep3.javaapplicationserver.service.login.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
