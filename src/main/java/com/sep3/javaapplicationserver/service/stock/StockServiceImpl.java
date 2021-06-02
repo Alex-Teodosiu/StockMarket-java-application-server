@@ -30,14 +30,13 @@ public class StockServiceImpl implements StockService {
     public StockServiceImpl(){
         apiKeys = new String[] {ApiKey, ApiKey1, ApiKey2, ApiKey3, ApiKey4, ApiKey5};
         generator = new Random();
-        JsonDeserializer<Date> deser = (jSon, typeOfT, context) -> jSon == null ? null : new Date(jSon.getAsLong());
-        gson = new GsonBuilder().registerTypeAdapter(Date.class,deser).create();
+        gson = new GsonBuilder().create();
     }
     @Override
     public Stock getStock(String symbol) {
         GetAPIKey();
         var response = Unirest.get("https://api.twelvedata.com/quote?symbol="+symbol+
-                "&interval=1day&apikey="+key);
+                "&interval=1day&apikey="+key).header("accept","application/json");
         try {
             Stock stock = gson.fromJson(String.valueOf(response.asJson().getBody()),Stock.class);
             stock.setPrice(getStockPrice(symbol));
@@ -66,7 +65,7 @@ public class StockServiceImpl implements StockService {
     public Stock[] getStockPriceList(String symbol) {
         GetAPIKey();
         var response = Unirest.get("https://api.twelvedata.com/time_series?symbol="+symbol+
-                "&interval=1day&apikey="+key);
+                "&interval=1month&apikey="+key);
         try {
             Stocks stocks = gson.fromJson(response.asJson().getBody().toString(),Stocks.class);
             System.out.println(stocks.values.length);
@@ -91,9 +90,4 @@ public class StockServiceImpl implements StockService {
         private Stock[] values;
     }
 
-    public static void main(String[] args) {
-        StockService stockService = new StockServiceImpl();
-        var stock = stockService.getStock("FB");
-        System.out.println(stock);
-    }
 }
