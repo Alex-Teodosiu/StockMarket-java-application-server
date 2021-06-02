@@ -2,7 +2,7 @@ package com.sep3.javaapplicationserver.service;
 
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
-import org.junit.Assert;
+import com.sep3.javaapplicationserver.service.account.AccountServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

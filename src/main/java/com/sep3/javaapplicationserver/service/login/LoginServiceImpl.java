@@ -1,4 +1,4 @@
-package com.sep3.javaapplicationserver.service;
+package com.sep3.javaapplicationserver.service.login;
 
 import com.sep3.javaapplicationserver.exception.EntityNotFoundException;
 import com.sep3.javaapplicationserver.exception.BusinessException;

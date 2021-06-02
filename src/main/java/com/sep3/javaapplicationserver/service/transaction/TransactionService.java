@@ -1,6 +1,9 @@
-package com.sep3.javaapplicationserver.service;
+package com.sep3.javaapplicationserver.service.transaction;
 
+import com.sep3.javaapplicationserver.model.OwnedStock;
 import com.sep3.javaapplicationserver.model.Transaction;
+
+import java.util.List;
 
 public interface TransactionService {
 
@@ -9,4 +12,6 @@ public interface TransactionService {
     Transaction findTransactionByIdOrFail(Long transactionId);
 
     void deleteAllByAccountId(Long accountId);
+
+    List<OwnedStock> getOwnedStock(Long accountId);
 }

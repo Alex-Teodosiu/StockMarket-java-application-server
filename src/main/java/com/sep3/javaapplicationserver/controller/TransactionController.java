@@ -2,10 +2,11 @@ package com.sep3.javaapplicationserver.controller;
 
 import com.sep3.javaapplicationserver.exception.BusinessException;
 import com.sep3.javaapplicationserver.exception.EntityNotFoundException;
+import com.sep3.javaapplicationserver.model.OwnedStock;
 import com.sep3.javaapplicationserver.model.Transaction;
 import com.sep3.javaapplicationserver.repository.TransactionRepository;
-import com.sep3.javaapplicationserver.service.AccountService;
-import com.sep3.javaapplicationserver.service.TransactionService;
+import com.sep3.javaapplicationserver.service.account.AccountService;
+import com.sep3.javaapplicationserver.service.transaction.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,13 @@ public class TransactionController {
         accountService.findByIdOrFail(accountId);
         return transactionRepository.findByAccount_id(accountId);
     }
+
+    @GetMapping("/ownedStocks/{accountId}")
+    public List<OwnedStock> getOwnedStocks(@PathVariable Long accountId) {
+        accountService.findByIdOrFail(accountId);
+        return transactionService.getOwnedStock(accountId);
+    }
+
 
     // TODO return/throw exception if not found parameters
 

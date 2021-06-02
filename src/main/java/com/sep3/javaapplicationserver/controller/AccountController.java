@@ -1,7 +1,7 @@
 package com.sep3.javaapplicationserver.controller;
 import com.sep3.javaapplicationserver.model.Account;
 import com.sep3.javaapplicationserver.repository.AccountRepository;
-import com.sep3.javaapplicationserver.service.AccountService;
+import com.sep3.javaapplicationserver.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
