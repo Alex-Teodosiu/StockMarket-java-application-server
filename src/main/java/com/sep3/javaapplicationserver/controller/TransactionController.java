@@ -2,6 +2,7 @@ package com.sep3.javaapplicationserver.controller;
 
 import com.sep3.javaapplicationserver.exception.BusinessException;
 import com.sep3.javaapplicationserver.exception.EntityNotFoundException;
+import com.sep3.javaapplicationserver.model.OwnedStock;
 import com.sep3.javaapplicationserver.model.Transaction;
 import com.sep3.javaapplicationserver.repository.TransactionRepository;
 import com.sep3.javaapplicationserver.service.AccountService;
@@ -40,6 +41,13 @@ public class TransactionController {
         accountService.findByIdOrFail(accountId);
         return transactionRepository.findByAccount_id(accountId);
     }
+
+    @GetMapping("/ownedStocks/{accountId}")
+    public List<OwnedStock> getOwnedStocks(@PathVariable Long accountId) {
+        accountService.findByIdOrFail(accountId);
+        return transactionService.getOwnedStock(accountId);
+    }
+
 
     // TODO return/throw exception if not found parameters
 
