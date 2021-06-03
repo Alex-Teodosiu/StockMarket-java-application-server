@@ -1,6 +1,7 @@
 package com.sep3.javaapplicationserver.service.stock;
 
 import com.sep3.javaapplicationserver.model.Stock;
+import lombok.Data;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 
@@ -92,70 +93,24 @@ public class ProxyService implements StockService{
         System.out.println("STOCK LIST FROM CACHE: "+stock);
         return stock;
     }
-
+    @Data
     private class StockDateTime
     {
-        public Stock stock;
-        public long dateTime;
-
-        public Stock getStock() {
-            return stock;
-        }
-
-        public void setStock(Stock stock) {
-            this.stock = stock;
-        }
-
-        public long getDateTime() {
-            return dateTime;
-        }
-
-        public void setDateTime(long dateTime) {
-            this.dateTime = dateTime;
-        }
+        private Stock stock;
+        private long dateTime;
     }
-
+    @Data
     private class PriceDateTime
     {
-        public double price;
-        public long dateTime;
+        private double price;
+        private long dateTime;
 
-        public double getPrice() {
-            return price;
-        }
-
-        public void setPrice(double price) {
-            this.price = price;
-        }
-
-        public long getDateTime() {
-            return dateTime;
-        }
-
-        public void setDateTime(long dateTime) {
-            this.dateTime = dateTime;
-        }
     }
-
+    @Data
     private class ListDateTime
     {
-        public Stock[] stocks;
-        public long dateTime;
+        private Stock[] stocks;
+        private long dateTime;
 
-        public Stock[] getStocks() {
-            return stocks;
-        }
-
-        public void setStocks(Stock[] stocks) {
-            this.stocks = stocks;
-        }
-
-        public long getDateTime() {
-            return dateTime;
-        }
-
-        public void setDateTime(long dateTime) {
-            this.dateTime = dateTime;
-        }
     }
 }

@@ -60,7 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
         return SortTransactions(transactions);
     }
 
-    private List<OwnedStock> SortTransactions(List<Transaction> transactions){
+    public List<OwnedStock> SortTransactions(List<Transaction> transactions){
         ownedStocks = new ArrayList<>();
 
         for (Transaction t: transactions) {
@@ -93,7 +93,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
         return ownedStocks;
     }
-    private OwnedStock getOwnedStock(String symbol){
+    public OwnedStock getOwnedStock(String symbol){
         for (OwnedStock o: ownedStocks){
             if (o.getSymbol().equals(symbol)){
                 return o;
