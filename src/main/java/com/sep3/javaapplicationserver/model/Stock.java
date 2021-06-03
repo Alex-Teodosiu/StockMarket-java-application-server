@@ -13,7 +13,7 @@ public class Stock {
     private String name;
 
     @JsonFormat(pattern="yyyy-MM-dd")
-    private Date datetime;
+    private String datetime;
 
     private double price;
 
